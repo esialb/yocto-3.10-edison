@@ -548,6 +548,7 @@ int __init arm_add_memory(u64 start, u64 size)
 	 * Size is appropriately rounded down, start is rounded up.
 	 */
 	size -= start & ~PAGE_MASK;
+<<<<<<< HEAD
 	aligned_start = PAGE_ALIGN(start);
 
 #ifndef CONFIG_ARCH_PHYS_ADDR_T_64BIT
@@ -556,8 +557,27 @@ int __init arm_add_memory(u64 start, u64 size)
 		       "32-bit physical address space\n", (long long)start);
 		return -EINVAL;
 	}
+||||||| merged common ancestors
+	bank->start = PAGE_ALIGN(start);
+=======
+	aligned_start = PAGE_ALIGN(start);
+>>>>>>> v3.10.34
+
+<<<<<<< HEAD
+	if (aligned_start + size > ULONG_MAX) {
+||||||| merged common ancestors
+#ifndef CONFIG_ARM_LPAE
+	if (bank->start + size < bank->start) {
+=======
+#ifndef CONFIG_ARCH_PHYS_ADDR_T_64BIT
+	if (aligned_start > ULONG_MAX) {
+		printk(KERN_CRIT "Ignoring memory at 0x%08llx outside "
+		       "32-bit physical address space\n", (long long)start);
+		return -EINVAL;
+	}
 
 	if (aligned_start + size > ULONG_MAX) {
+>>>>>>> v3.10.34
 		printk(KERN_CRIT "Truncating memory at 0x%08llx to fit in "
 			"32-bit physical address space\n", (long long)start);
 		/*
@@ -569,7 +589,26 @@ int __init arm_add_memory(u64 start, u64 size)
 	}
 #endif
 
+<<<<<<< HEAD
 	bank->start = aligned_start;
+||||||| merged common ancestors
+=======
+	if (aligned_start < PHYS_OFFSET) {
+		if (aligned_start + size <= PHYS_OFFSET) {
+			pr_info("Ignoring memory below PHYS_OFFSET: 0x%08llx-0x%08llx\n",
+				aligned_start, aligned_start + size);
+			return -EINVAL;
+		}
+
+		pr_info("Ignoring memory below PHYS_OFFSET: 0x%08llx-0x%08llx\n",
+			aligned_start, (u64)PHYS_OFFSET);
+
+		size -= PHYS_OFFSET - aligned_start;
+		aligned_start = PHYS_OFFSET;
+	}
+
+	bank->start = aligned_start;
+>>>>>>> v3.10.34
 	bank->size = size & ~(phys_addr_t)(PAGE_SIZE - 1);
 
 	/*
