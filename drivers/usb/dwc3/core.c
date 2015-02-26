@@ -666,6 +666,7 @@ static void dwc3_complete(struct device *dev)
 
 	spin_lock_irqsave(&dwc->lock, flags);
 
+	dwc3_event_buffers_setup(dwc);
 	switch (dwc->mode) {
 	case DWC3_MODE_DEVICE:
 	case DWC3_MODE_DRD:
@@ -673,7 +674,6 @@ static void dwc3_complete(struct device *dev)
 		/* FALLTHROUGH */
 	case DWC3_MODE_HOST:
 	default:
-		dwc3_event_buffers_setup(dwc);
 		break;
 	}
 
