@@ -36,13 +36,20 @@ echo "copying kernel modules"
 
 [ -e "${MODULES}" ] && rm -Rf "${MODULES}"
 
+MODCOUNT=0
 for KO in `find . -name '*.ko'`; do 
   D=$(dirname "${KO}")
   mkdir -p "${MODULES}/kernel/${D}"
   cp "${KO}" "${MODULES}/kernel/${D}"
+  echo -n .
+  MODCOUNT=$((${MODCOUNT} + 1))
 done
+echo
+echo "${MODCOUNT} modules copied"
 
+echo "computing module dependencies"
 cp modules.* "${MODULES}"
+depmod -a -b "${FSROOT_MOUNT}" -F System.map "${RELEASE}"
 
 echo "copying kernel image"
 
@@ -57,8 +64,8 @@ cp "${BZIMAGE}" "${FSBOOT_MOUNT}/vmlinuz"
 
 echo "unmounting filesystem images"
 
-umount "${FSBOOT_MOUNT}"
-umount "${FSROOT_MOUNT}"
+while ! umount "${FSBOOT_MOUNT}"; do sleep 1; done
+while ! umount "${FSROOT_MOUNT}"; do sleep 1; done
 
 rmdir "${FSBOOT_MOUNT}"
 rmdir "${FSROOT_MOUNT}"
