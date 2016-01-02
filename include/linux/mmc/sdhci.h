@@ -190,6 +190,7 @@ struct sdhci_host {
 	u8 pwr;			/* Current voltage */
 
 	bool runtime_suspended;	/* Host is runtime suspended */
+	bool bus_on;            /* Bus power prevents runtime suspend */
 	bool suspended;		/* Host is suspended */
 
 	struct mmc_request *mrq;	/* Current request */

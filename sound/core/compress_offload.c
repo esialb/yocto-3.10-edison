@@ -705,27 +705,6 @@ EXPORT_SYMBOL(snd_compr_stop);
 
 static int snd_compress_wait_for_drain(struct snd_compr_stream *stream)
 {
-	/*
-	 * We are called with lock held. So drop the lock while we wait for
-	 * drain complete notfication from the driver
-	 *
-	 * It is expected that driver will notify the drain completion and then
-	 * stream will be moved to SETUP state, even if draining resulted in an
-	 * error. We can trigger next track after this.
-	 */
-	stream->runtime->state = SNDRV_PCM_STATE_DRAINING;
-	mutex_unlock(&stream->device->lock);
-
-	wait_event(stream->runtime->wait, stream->runtime->drain_wake);
-
-	wake_up(&stream->runtime->sleep);
-	mutex_lock(&stream->device->lock);
-
-	return 0;
-}
-
-static int snd_compress_wait_for_drain(struct snd_compr_stream *stream)
-{
 	int ret;
 
 	/*

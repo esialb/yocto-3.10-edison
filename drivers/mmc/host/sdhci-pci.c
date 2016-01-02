@@ -41,6 +41,10 @@
  */
 #define PCI_DEVICE_ID_INTEL_PCH_SDIO0	0x8809
 #define PCI_DEVICE_ID_INTEL_PCH_SDIO1	0x880a
+#define PCI_DEVICE_ID_INTEL_BYT_EMMC   0x0f14
+#define PCI_DEVICE_ID_INTEL_BYT_SDIO   0x0f15
+#define PCI_DEVICE_ID_INTEL_BYT_SD     0x0f16
+#define PCI_DEVICE_ID_INTEL_BYT_EMMC2  0x0f50
 
 /*
  * PCI registers
@@ -95,6 +99,7 @@ struct sdhci_pci_slot {
 	int			rst_n_gpio;
 	int			cd_gpio;
 	int			cd_irq;
+	void (*hw_reset)(struct sdhci_host *host);
 	bool			dev_power;
 	struct mutex		power_lock;
 	bool			dma_enabled;
@@ -567,6 +572,7 @@ static int ctp_sd_probe_slot(struct sdhci_pci_slot *slot)
 static const struct sdhci_pci_fixes sdhci_intel_mfd_sd = {
 	.quirks		= SDHCI_QUIRK_NO_ENDATTR_IN_NOPDESC,
 	.allow_runtime_pm = true,
+	.own_cd_for_runtime_pm = true,
 	.probe_slot	= ctp_sd_probe_slot,
 };
 
@@ -627,6 +633,18 @@ static int byt_sdio_probe_slot(struct sdhci_pci_slot *slot)
 
 	return 0;
 }
+
+static const struct sdhci_pci_fixes sdhci_intel_byt_emmc = {
+	.allow_runtime_pm = true,
+	.probe_slot     = byt_emmc_probe_slot,
+	.quirks2        = SDHCI_QUIRK2_PRESET_VALUE_BROKEN,
+};
+
+static const struct sdhci_pci_fixes sdhci_intel_byt_sdio = {
+	.quirks2        = SDHCI_QUIRK2_HOST_OFF_CARD_ON,
+	.allow_runtime_pm = true,
+	.probe_slot     = byt_sdio_probe_slot,
+};
 
 #define TNG_IOAPIC_IDX	0xfec00000
 static void mrfl_ioapic_rte_reg_addr_map(struct sdhci_pci_slot *slot)
@@ -791,6 +809,12 @@ static const struct sdhci_pci_fixes sdhci_intel_moor_emmc = {
 	.allow_runtime_pm = true,
 	.probe_slot	= intel_moor_emmc_probe_slot,
 	.remove_slot	= intel_moor_emmc_remove_slot,
+};
+
+static const struct sdhci_pci_fixes sdhci_intel_byt_sd = {
+	.quirks2        = SDHCI_QUIRK2_CARD_ON_NEEDS_BUS_ON,
+	.allow_runtime_pm = true,
+	.own_cd_for_runtime_pm = true,
 };
 
 static const struct sdhci_pci_fixes sdhci_intel_moor_sd = {

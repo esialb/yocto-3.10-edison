@@ -200,7 +200,7 @@ static unsigned extract_freq(u32 msr, struct sfi_cpufreq_data *data)
 	perf = data->sfi_data;
 
 	for (i = 0; data->freq_table[i].frequency != CPUFREQ_TABLE_END; i++) {
-		sfi_ctrl = perf->states[data->freq_table[i].index].control
+		sfi_ctrl = perf->states[data->freq_table[i].driver_data].control
 			& INTEL_MSR_BUSRATIO_MASK;
 		if (sfi_ctrl == msr)
 			return data->freq_table[i].frequency;
@@ -275,7 +275,7 @@ static int sfi_cpufreq_target(struct cpufreq_policy *policy,
 	if (unlikely(result))
 		return -ENODEV;
 
-	next_perf_state = data->freq_table[next_state].index;
+	next_perf_state = data->freq_table[next_state].driver_data;
 	if (perf->state == next_perf_state) {
 		if (unlikely(data->resume)) {
 			pr_debug("Called after resume, resetting to P%d\n",
@@ -395,7 +395,7 @@ static int sfi_cpufreq_cpu_init(struct cpufreq_policy *policy)
 		    data->freq_table[valid_states-1].frequency / 1000)
 			continue;
 
-		data->freq_table[valid_states].index = i;
+		data->freq_table[valid_states].driver_data = i;
 		data->freq_table[valid_states].frequency =
 		    perf->states[i].core_frequency * 1000;
 		valid_states++;

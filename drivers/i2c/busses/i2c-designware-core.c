@@ -985,16 +985,6 @@ int i2c_dw_init(struct dw_i2c_dev *dev)
 		dev_dbg(dev->dev, "Fast-mode HCNT:LCNT = %d:%d\n", hcnt, lcnt);
 	}
 
-	/* Configure SDA Hold Time if required */
-	if (dev->sda_hold_time) {
-		reg = dw_readl(dev, DW_IC_COMP_VERSION);
-		if (reg >= DW_IC_SDA_HOLD_MIN_VERS)
-			dw_writel(dev, dev->sda_hold_time, DW_IC_SDA_HOLD);
-		else
-			dev_warn(dev->dev,
-				"Hardware too old to adjust SDA hold time.");
-	}
-
 	/* Configure Tx/Rx FIFO threshold levels */
 	dw_writel(dev, dev->tx_fifo_depth/2, DW_IC_TX_TL);
 	dw_writel(dev, dev->rx_fifo_depth/2, DW_IC_RX_TL);
@@ -1028,36 +1018,21 @@ static int i2c_dw_wait_bus_not_busy(struct dw_i2c_dev *dev)
 static void i2c_dw_xfer_init(struct dw_i2c_dev *dev)
 {
 	struct i2c_msg *msgs = dev->msgs;
-	u32 ic_con, ic_tar = 0;
+	u32 ic_con;
 
 	/* Disable the adapter */
 	i2c_dw_disable(dev);
 
+	/* set the slave (target) address */
+	dw_writel(dev, msgs[dev->msg_write_idx].addr, DW_IC_TAR);
+
 	/* if the slave address is ten bit address, enable 10BITADDR */
 	ic_con = dw_readl(dev, DW_IC_CON);
-	if (msgs[dev->msg_write_idx].flags & I2C_M_TEN) {
+	if (msgs[dev->msg_write_idx].flags & I2C_M_TEN)
 		ic_con |= DW_IC_CON_10BITADDR_MASTER;
-		/*
-		 * If I2C_DYNAMIC_TAR_UPDATE is set, the 10-bit addressing
-		 * mode has to be enabled via bit 12 of IC_TAR register.
-		 * We set it always as I2C_DYNAMIC_TAR_UPDATE can't be
-		 * detected from registers.
-		 */
-		ic_tar = DW_IC_TAR_10BITADDR_MASTER;
-	} else {
+	else
 		ic_con &= ~DW_IC_CON_10BITADDR_MASTER;
-	}
-
 	dw_writel(dev, ic_con, DW_IC_CON);
-
-	/*
-	 * Set the slave (target) address and enable 10-bit addressing mode
-	 * if applicable.
-	 */
-	dw_writel(dev, msgs[dev->msg_write_idx].addr | ic_tar, DW_IC_TAR);
-
-	/* enforce disabled interrupts (due to HW issues) */
-	i2c_dw_disable_int(dev);
 
 	/* Enable the adapter */
 	i2c_dw_enable(dev);
@@ -1122,14 +1097,6 @@ i2c_dw_xfer_msg(struct dw_i2c_dev *dev)
 			/* new i2c_msg */
 			buf = msgs[dev->msg_write_idx].buf;
 			buf_len = msgs[dev->msg_write_idx].len;
-
-			/* If both IC_EMPTYFIFO_HOLD_MASTER_EN and
-			 * IC_RESTART_EN are set, we must manually
-			 * set restart bit between messages.
-			 */
-			if ((dev->master_cfg & DW_IC_CON_RESTART_EN) &&
-					(dev->msg_write_idx > 0))
-				need_restart = true;
 		}
 
 		tx_limit = dev->tx_fifo_depth - dw_readl(dev, DW_IC_TXFLR);
