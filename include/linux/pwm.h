@@ -87,8 +87,8 @@ struct pwm_device {
 	struct pwm_chip		*chip;
 	void			*chip_data;
 
-	unsigned int		period; 	/* in nanoseconds */
-	unsigned int		duty_cycle;	/* in nanoseconds */
+	unsigned int		period;     /* in nanoseconds */
+	unsigned int		duty_cycle; /* in nanoseconds */
 	enum pwm_polarity	polarity;
 };
 
@@ -304,5 +304,6 @@ static inline void pwmchip_sysfs_unexport(struct pwm_chip *chip)
 {
 }
 #endif /* CONFIG_PWM_SYSFS */
+
 
 #endif /* __LINUX_PWM_H */
