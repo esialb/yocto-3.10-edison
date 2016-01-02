@@ -29,8 +29,8 @@ echo "mounting filesystem images"
 mkdir -p "${FSROOT_MOUNT}"
 mkdir -p "${FSBOOT_MOUNT}"
 
-mount -o loop "${FSROOT_IMAGE}" "${FSROOT_MOUNT}" || exit 1
-mount -o loop "${FSBOOT_IMAGE}" "${FSBOOT_MOUNT}" || exit 1
+mount -o loop,sync "${FSROOT_IMAGE}" "${FSROOT_MOUNT}" || exit 1
+mount -o loop,sync "${FSBOOT_IMAGE}" "${FSBOOT_MOUNT}" || exit 1
 
 echo "copying kernel modules"
 
