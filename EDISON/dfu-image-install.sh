@@ -12,7 +12,7 @@ if [ ! -f ./EDISON/dfu-image-install.sh ]; then
   exit 1
 fi
 
-RELEASE=$(cat include/generated/utsrelease.h | awk '{print $3}' | sed 's/^"(.*)"$/$1/')
+RELEASE=$(cat include/generated/utsrelease.h | awk '{print $3}' | perl -p -e 's/^"(.*)"$/$1/')
 
 FSROOT_IMAGE="${TOFLASH}/edison-image-edison.ext4"
 FSBOOT_IMAGE="${TOFLASH}/edison-image-edison.hddimg"
