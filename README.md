@@ -17,7 +17,7 @@ Intel Edison default kernel config taken from: *edison-GPL_LGPL-sources-ww18-15/
 
 ## Patches Applied
 * Intel Edison kernel patch
-* bluetooth rfcomm tty kernel panic patch
+* [bluetooth rfcomm tty kernel panic patch](commit/6200568c0b18ffe0655a59ef4e52af8ba218a9ae)
 
 ## Goodies
 See the [EDISON](EDISON/) folder.
