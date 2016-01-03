@@ -37,10 +37,17 @@ echo "copying kernel modules"
 [ -e "${MODULES}" ] && rm -Rf "${MODULES}"
 
 MODCOUNT=0
-for KO in `find . -name '*.ko'`; do 
+for KO in `find * -name '*.ko' | egrep -v -e '^EDISON/'`; do 
   D=$(dirname "${KO}")
   mkdir -p "${MODULES}/kernel/${D}"
   cp "${KO}" "${MODULES}/kernel/${D}"
+  echo -n .
+  MODCOUNT=$((${MODCOUNT} + 1))
+done
+for KO in `find EDISON -name '*.ko' | sed 's/^EDISON\///'`; do
+  D=$(dirname "${KO}")
+  mkdir -p "${MODULES}/${D}"
+  cp "EDISON/${KO}" "${MODULES}/${D}"
   echo -n .
   MODCOUNT=$((${MODCOUNT} + 1))
 done
