@@ -29,8 +29,8 @@ echo "mounting filesystem images"
 mkdir -p "${FSROOT_MOUNT}"
 mkdir -p "${FSBOOT_MOUNT}"
 
-mount -o loop,sync "${FSROOT_IMAGE}" "${FSROOT_MOUNT}" || exit 1
-mount -o loop,sync "${FSBOOT_IMAGE}" "${FSBOOT_MOUNT}" || exit 1
+mount -o loop "${FSROOT_IMAGE}" "${FSROOT_MOUNT}" || exit 1
+mount -o loop "${FSBOOT_IMAGE}" "${FSBOOT_MOUNT}" || exit 1
 
 echo "copying kernel modules"
 
@@ -64,8 +64,8 @@ cp "${BZIMAGE}" "${FSBOOT_MOUNT}/vmlinuz"
 
 echo "unmounting filesystem images"
 
-while ! umount "${FSBOOT_MOUNT}"; do sleep 1; done
-while ! umount "${FSROOT_MOUNT}"; do sleep 1; done
+while ! umount "${FSBOOT_MOUNT}" > /dev/null 2>&1; do sleep 1; done
+while ! umount "${FSROOT_MOUNT}" > /dev/null 2>&1; do sleep 1; done
 
 rmdir "${FSBOOT_MOUNT}"
 rmdir "${FSROOT_MOUNT}"
