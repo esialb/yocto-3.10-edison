@@ -42,6 +42,7 @@ depmod -a -b "${FSROOT}" -F System.map "${RELEASE}"
 echo "copying kernel image"
 
 mkdir -p "${FSROOT}/lib/kernel"
+mkdir -p "${FSROOT}/boot"
 [ -e "${FSROOT}/boot/bzImage-${RELEASE}" ] && rm -Rf "${FSROOT}/boot/bzImage-${RELEASE}"
 cp "${BZIMAGE}" "${FSROOT}/lib/kernel/bzImage-${RELEASE}"
 cp "${BZIMAGE}" "${FSROOT}/boot/vmlinuz"
