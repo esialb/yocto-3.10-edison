@@ -10,9 +10,9 @@ Unfortunately, the Edison won't boot a kernel without Intel's patches.
 This repo contains a Yocto 3.10 kernel, version 3.10.65, with the Intel Edison
 patch applied.  Additional fixes described below have also been applied.
 
-Intel Edison kernel patch taken from: *edison-GPL_LGPL-sources-ww18-15/i586-poky-linux/linux-yocto-3.10.17+gitAUTOINC+6ad20f049a_c03195ed6e-r0/upstream_to_edison.patch*
+Intel Edison kernel patch taken from: `edison-GPL_LGPL-sources-ww18-15/i586-poky-linux/linux-yocto-3.10.17+gitAUTOINC+6ad20f049a_c03195ed6e-r0/upstream_to_edison.patch`
 
-Intel Edison default kernel config taken from: *edison-GPL_LGPL-sources-ww18-15/i586-poky-linux/linux-yocto-3.10.17+gitAUTOINC+6ad20f049a_c03195ed6e-r0/defconfig*
+Intel Edison default kernel config taken from: `edison-GPL_LGPL-sources-ww18-15/i586-poky-linux/linux-yocto-3.10.17+gitAUTOINC+6ad20f049a_c03195ed6e-r0/defconfig` *(default kernel config modified to use bzip2 instead of gzip compression, since that's what u-boot wants)*
 
 ## Code Changes from Yocto Standard Base
 * [Intel Edison kernel patch](https://github.com/esialb/yocto-3.10-edison/commit/135099850756dfef50f99a5bd6e3de6ca56e88ab)
@@ -22,6 +22,8 @@ Intel Edison default kernel config taken from: *edison-GPL_LGPL-sources-ww18-15/
 See the [EDISON](EDISON/) folder.
 * `default-edison-dotconfig` default kernel .config file provided with ww18-15
 * `dfu-image-install.sh` shell script which will install a newly built kernel in an Edison DFU `toFlash/` directory
+* `collect.sh` shell script will collect the kernel into a directory that can be copied over via sftp to edison
+* `rebuild.sh` shell script to rebuild kenel as well as bcm4334x module
 
 ## Credits
 * [Intel Edison Software Release 2.1](https://downloadcenter.intel.com/download/24910/Intel-Edison-Software-Release-2-1)
@@ -39,3 +41,4 @@ See the [EDISON](EDISON/) folder.
     
     Discussion of a bluetooth rfcomm bug in 3.10.x (to be patched in 3.12) that causes kernel panics on hangup.  Includes the git commit ID of the fix applied to 3.12, which could then be cherry-picked onto 3.10.
 
+* [Edison bcm4334x driver](https://github.com/01org/edison-bcm43340)
