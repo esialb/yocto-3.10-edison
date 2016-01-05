@@ -7,7 +7,7 @@ fi
 
 RELEASE=$(cat include/generated/utsrelease.h | awk '{print $3}' | perl -p -e 's/^"(.*)"$/$1/')
 
-FSROOT="EDISON/fsroot/${RELEASE}"
+FSROOT="EDISON/meta/${RELEASE}"
 
 MODULES="${FSROOT}/lib/modules/${RELEASE}"
 
@@ -25,10 +25,9 @@ for KO in `find * -name '*.ko' | egrep -v -e '^EDISON/'`; do
   echo -n .
   MODCOUNT=$((${MODCOUNT} + 1))
 done
-for KO in `find EDISON/extra -name '*.ko' | sed 's/^EDISON\/extra\///'`; do
-  D=$(dirname "${KO}")
-  mkdir -p "${MODULES}/extra/${D}"
-  cp "EDISON/extra/${KO}" "${MODULES}/extra/${D}"
+for KO in EDISON/bcm43340/bcm4334x.ko; do
+  mkdir -p "${MODULES}/extra"
+  cp "${KO}" "${MODULES}/extra"
   echo -n .
   MODCOUNT=$((${MODCOUNT} + 1))
 done
