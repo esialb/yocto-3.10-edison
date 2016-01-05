@@ -44,10 +44,10 @@ for KO in `find * -name '*.ko' | egrep -v -e '^EDISON/'`; do
   echo -n .
   MODCOUNT=$((${MODCOUNT} + 1))
 done
-for KO in `find EDISON -name '*.ko' | sed 's/^EDISON\///'`; do
+for KO in `find EDISON/extra -name '*.ko' | sed 's/^EDISON\/extra\///'`; do
   D=$(dirname "${KO}")
-  mkdir -p "${MODULES}/${D}"
-  cp "EDISON/${KO}" "${MODULES}/${D}"
+  mkdir -p "${MODULES}/extra/${D}"
+  cp "EDISON/extra/${KO}" "${MODULES}/extra/${D}"
   echo -n .
   MODCOUNT=$((${MODCOUNT} + 1))
 done
