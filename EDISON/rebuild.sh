@@ -10,7 +10,7 @@ RELEASE=$(cat include/generated/utsrelease.h | awk '{print $3}' | perl -p -e 's/
 cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd ..
 make clean
-make
+make || exit
 cd EDISON/bcm43340
 make clean
 KERNEL_SRC=../.. make
